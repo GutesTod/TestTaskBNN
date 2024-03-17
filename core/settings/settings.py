@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = 8000
 
-    database_url: str = "postgresql+asyncpg://postgres:21612gutes@localhost:5432/testtaskbnn"
+    database_url: str = "postgresql+asyncpg://postgres:12345678@localhost:5432/testtaskbnn"
 
     project_root: Path = Path(__file__).parent.parent.parent.resolve()
 
