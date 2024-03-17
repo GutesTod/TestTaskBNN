@@ -18,13 +18,12 @@ async def test_my_api(client, app):
     assert response.status_code == status.HTTP_201_CREATED
     new_session_id = response.json()["data"]["session_id"]
     assert isinstance(new_session_id, str)
-    response = await client.get(f"/api/async/{new_session_id}/")
+    response = await client.get(f"/api/async/{new_session_id}")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
         "status": "ok",
         "data": {
-            "id": new_session_id,
-            "name": "Michael",
-            "fullname": "Test Person",
+            "session_id": new_session_id,
+            "sum": 21,
         },
     }
