@@ -1,5 +1,5 @@
 from uuid import uuid4
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,12 +15,12 @@ async def sum_sync(request: SumRequest) -> JSONResponse:
     return JSONResponse(
         content={
             "status": "ok",
-            "data": {"sum": sum(SumRequest.array)}
+            "data": {"sum": sum(request.array)}
         }
     )
 
 # Асинхронный метод
-@core_router.post("/api/async")
+@core_router.post("/api/async", status_code=status.HTTP_201_CREATED)
 async def sum_async(request: SumRequest, session: AsyncSession = Depends(database.get_session)) ->  JSONResponse:
     session_id = str(uuid4())
 
@@ -30,13 +30,14 @@ async def sum_async(request: SumRequest, session: AsyncSession = Depends(databas
         sum=sum(request.array)
     )
     session.add(result)
-    session.commit()
+    await session.commit()
 
     return JSONResponse(
         content={
             "status": "ok",
             "data" : {"session_id": session_id}
-        }
+        },
+        status_code=status.HTTP_201_CREATED,
     )
 
 # Получение результата
@@ -47,7 +48,10 @@ async def get_result(session_id: str, session: AsyncSession = Depends(database.g
     result = (await session.execute(query)).scalars().first()
 
     if result is None:
-        raise HTTPException(status_code=404, detail="Session not found")
+        return JSONResponse(
+            content={"status": "error", "message": "Sum not found"},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
 
     return JSONResponse(
         content={

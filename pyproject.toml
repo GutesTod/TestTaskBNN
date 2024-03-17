@@ -6,13 +6,17 @@ authors = ["GutesTod <jefflol003@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.10"
 fastapi = "^0.110.0"
 sqlalchemy = "^2.0.28"
 alembic = "^1.13.1"
 pydantic-settings = "^2.2.1"
 psycopg = {extras = ["binary"], version = "^3.1.18"}
 sqlalchemy-utils = "^0.41.1"
+uvloop = "^0.19.0"
+asyncpg = "^0.29.0"
+uvicorn = "^0.28.0"
+ibm-db-sa = "^0.4.0"
 
 
 [tool.poetry.group.test.dependencies]

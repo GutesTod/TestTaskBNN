@@ -58,7 +58,7 @@ async def session(sessionmanager_for_tests):
     async with database.db_manager.session() as session:
         yield session
     async with database.db_manager.connect() as conn:
-        for table in reversed(database.databaseBase.metadata.sorted_tables):
+        for table in reversed(database.OrmBase.metadata.sorted_tables):
             await conn.execute(table.delete())
         await conn.commit()
 
