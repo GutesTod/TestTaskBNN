@@ -11,8 +11,13 @@ from .models import SumRequest
 core_router = APIRouter()
 
 @core_router.post("/api/sync")
-async def sum_sync(request: SumRequest):
-    return {"sum": sum(request.array)}
+async def sum_sync(request: SumRequest) -> JSONResponse:
+    return JSONResponse(
+        content={
+            "status": "ok",
+            "data": {"sum": sum(SumRequest.array)}
+        }
+    )
 
 # Асинхронный метод
 @core_router.post("/api/async")

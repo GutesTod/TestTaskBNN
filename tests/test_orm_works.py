@@ -1,18 +1,18 @@
 from sqlalchemy import text
 
-import orm
+import core.database as database
 
 
 async def test_orm_session(session):
-    user = orm.User(
-        name="Michael",
-        fullname="Michael Test Jr.",
+    user = database.SumResult(
+        session_id="3251009e-1364-4152-a540-c7f8ed2d193f",
+        sum=25,
     )
     session.add(user)
     await session.commit()
 
-    rows = await session.execute(text('SELECT id, name, fullname FROM "user_account"'))
+    rows = await session.execute(text('SELECT session_id, sum FROM "sum_results"'))
     result = list(rows)[0]
     assert isinstance(result[0], int)
-    assert result[1] == "Michael"
-    assert result[2] == "Michael Test Jr."
+    assert result[1] == "3251009e-1364-4152-a540-c7f8ed2d193f"
+    assert result[2] == 25

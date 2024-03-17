@@ -1,5 +1,6 @@
 import contextlib
 import uuid
+import os
 from argparse import Namespace
 from pathlib import Path
 from typing import AsyncIterator, Optional, Union
@@ -8,14 +9,13 @@ import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy_utils.functions.database import (
     _set_url_database,
-    _sqlite_file_exists,
     make_url,
 )
 from sqlalchemy_utils.functions.orm import quote
 from yarl import URL
 
 from alembic.config import Config as AlembicConfig
-from app.settings import settings
+from core.settings import settings
 
 
 def make_alembic_config(

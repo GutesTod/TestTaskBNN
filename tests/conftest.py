@@ -5,10 +5,10 @@ import pytest
 from httpx import AsyncClient
 from yarl import URL
 
-import orm
+import core.database as database
 from alembic.command import upgrade
-from app.settings import settings
-from orm.session_manager import db_manager
+from core.settings import settings
+
 from tests.db_utils import alembic_config_from_url, tmp_database
 
 
@@ -48,26 +48,17 @@ async def migrated_postgres_template(pg_url):
 
 @pytest.fixture(scope="session")
 async def sessionmanager_for_tests(migrated_postgres_template):
-    db_manager.init(db_url=migrated_postgres_template)
-    yield db_manager
-    await db_manager.close()
+    database.db_manager.init(db_url=migrated_postgres_template)
+    yield database.db_manager
+    await database.db_manager.close()
 
 
 @pytest.fixture()
 async def session(sessionmanager_for_tests):
-    async with db_manager.session() as session:
+    async with database.db_manager.session() as session:
         yield session
-    # Clean tables. I tried
-    # 1. Create new database using an empty `migrated_postgres_template` as template
-    # (postgres could copy whole db structure)
-    # 2. Do TRUNCATE after each test.
-    # 3. Do DELETE after each test.
-    # Doing DELETE FROM is the fastest
-    # https://www.lob.com/blog/truncate-vs-delete-efficiently-clearing-data-from-a-postgres-table
-    # BUT DELETE FROM query does not reset any AUTO_INCREMENT counters
-    async with db_manager.connect() as conn:
-        for table in reversed(orm.OrmBase.metadata.sorted_tables):
-            # Clean tables in such order that tables which depend on another go first
+    async with database.db_manager.connect() as conn:
+        for table in reversed(database.databaseBase.metadata.sorted_tables):
             await conn.execute(table.delete())
         await conn.commit()
 
