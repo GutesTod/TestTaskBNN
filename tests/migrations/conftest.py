@@ -7,7 +7,7 @@ from tests.db_utils import alembic_config_from_url, tmp_database
 @pytest.fixture()
 async def postgres(pg_url):
     """
-    Создает пустую временную базу данных.
+    Creates an empty temporary database.
     """
     async with tmp_database(pg_url, "pytest") as tmp_url:
         yield tmp_url
@@ -16,7 +16,7 @@ async def postgres(pg_url):
 @pytest.fixture()
 async def postgres_engine(postgres):
     """
-    Движок SQLAlchemy, привязанный к временной базе данных.
+    SQLAlchemy engine linked to a temporary database.
     """
     engine = create_async_engine(
         url=postgres,
@@ -31,6 +31,6 @@ async def postgres_engine(postgres):
 @pytest.fixture()
 def alembic_config(postgres):
     """
-    Объект конфигурации Alembic, привязанный к временной базе данных.
+    An Alembic configuration object linked to a temporary database.
     """
     return alembic_config_from_url(postgres)
