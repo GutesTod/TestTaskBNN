@@ -22,8 +22,16 @@ async def sum_sync(request: SumRequest) -> JSONResponse:
 # Асинхронный метод
 @core_router.post("/api/async", status_code=status.HTTP_201_CREATED)
 async def sum_async(request: SumRequest, session: AsyncSession = Depends(database.get_session)) ->  JSONResponse:
-    session_id = str(uuid4())
+    """Суммирует в асинхронном режиме
 
+    Args:
+        request (SumRequest): _description_
+        session (AsyncSession, optional): _description_. Defaults to Depends(database.get_session).
+
+    Returns:
+        JSONResponse: _description_
+    """    
+    session_id = str(uuid4())
     # Сохранить данные в базе данных
     result = database.SumResult(
         session_id = session_id,
